@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+
+    <title>Chat App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            background-color: #f4f7f6;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            transition: .5s;
+            border: 0;
+            margin-bottom: 30px;
+            border-radius: .55rem;
+            position: relative;
+            width: 100%;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+        }
+
+        .chat-app .people-list {
+            width: 280px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding: 20px;
+            z-index: 7
+        }
+
+        .chat-app .chat {
+            margin-left: 280px;
+            border-left: 1px solid #eaeaea
+        }
+
+        .people-list {
+            -moz-transition: .5s;
+            -o-transition: .5s;
+            -webkit-transition: .5s;
+            transition: .5s
+        }
+
+        .people-list .chat-list li {
+            padding: 10px 15px;
+            list-style: none;
+            border-radius: 3px
+        }
+
+        .people-list .chat-list li:hover {
+            background: #efefef;
+            cursor: pointer
+        }
+
+        .people-list .chat-list li.active {
+            background: #efefef
+        }
+
+        .people-list .chat-list li .name {
+            font-size: 15px
+        }
+
+        .people-list .chat-list img {
+            width: 45px;
+            border-radius: 50%
+        }
+
+        .people-list img {
+            float: left;
+            border-radius: 50%
+        }
+
+        .people-list .about {
+            float: left;
+            padding-left: 8px
+        }
+
+        .people-list .status {
+            color: #999;
+            font-size: 13px
+        }
+
+        .chat .chat-header {
+            padding: 15px 20px;
+            border-bottom: 2px solid #f4f7f6
+        }
+
+        .chat .chat-header img {
+            float: left;
+            border-radius: 40px;
+            width: 40px
+        }
+
+        .chat .chat-header .chat-about {
+            float: left;
+            padding-left: 10px
+        }
+
+        .chat .chat-history {
+            padding: 20px;
+            border-bottom: 2px solid #fff
+        }
+
+        .chat .chat-history ul {
+            padding: 0
+        }
+
+        .chat .chat-history ul li {
+            list-style: none;
+            margin-bottom: 30px
+        }
+
+        .chat .chat-history ul li:last-child {
+            margin-bottom: 0px
+        }
+
+        .chat .chat-history .message-data {
+            margin-bottom: 15px
+        }
+
+        .chat .chat-history .message-data img {
+            border-radius: 40px;
+            width: 40px
+        }
+
+        .chat .chat-history .message-data-time {
+            color: #434651;
+            padding-left: 6px
+        }
+
+        .chat .chat-history .message {
+            color: #444;
+            padding: 18px 20px;
+            line-height: 26px;
+            font-size: 16px;
+            border-radius: 7px;
+            display: inline-block;
+            position: relative
+        }
+
+        .chat .chat-history .message:after {
+            bottom: 100%;
+            left: 7%;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+            border-bottom-color: #fff;
+            border-width: 10px;
+            margin-left: -10px
+        }
+
+        .chat .chat-history .my-message {
+            background: #efefef
+        }
+
+        .chat .chat-history .my-message:after {
+            bottom: 100%;
+            left: 30px;
+            border: solid transparent;
+            content: " ";
+            height: 0;
+            width: 0;
+            position: absolute;
+            pointer-events: none;
+            border-bottom-color: #efefef;
+            border-width: 10px;
+            margin-left: -10px
+        }
+
+        .chat .chat-history .other-message {
+            background: #e8f1f3;
+            text-align: right
+        }
+
+        .chat .chat-history .other-message:after {
+            border-bottom-color: #e8f1f3;
+            left: 93%
+        }
+
+        .chat .chat-message {
+            padding: 20px
+        }
+
+        .online,
+        .offline,
+        .me {
+            margin-right: 2px;
+            font-size: 8px;
+            vertical-align: middle
+        }
+
+        .online {
+            color: #86c541
+        }
+
+        .offline {
+            color: #e47297
+        }
+
+        .me {
+            color: #1d8ecd
+        }
+
+        .float-right {
+            float: right
+        }
+
+        .clearfix:after {
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0
+        }
+
+        @media only screen and (max-width: 767px) {
+            .chat-app .people-list {
+                height: 465px;
+                width: 100%;
+                overflow-x: auto;
+                background: #fff;
+                left: -400px;
+                display: none
+            }
+
+            .chat-app .people-list.open {
+                left: 0
+            }
+
+            .chat-app .chat {
+                margin: 0
+            }
+
+            .chat-app .chat .chat-header {
+                border-radius: 0.55rem 0.55rem 0 0
+            }
+
+            .chat-app .chat-history {
+                height: 300px;
+                overflow-x: auto
+            }
+        }
+
+        @media only screen and (min-width: 768px) and (max-width: 992px) {
+            .chat-app .chat-list {
+                height: 650px;
+                overflow-x: auto
+            }
+
+            .chat-app .chat-history {
+                height: 600px;
+                overflow-x: auto
+            }
+        }
+
+        @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
+            .chat-app .chat-list {
+                height: 480px;
+                overflow-x: auto
+            }
+
+            .chat-app .chat-history {
+                height: calc(100vh - 350px);
+                overflow-x: auto
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-lg-12">
+                <div class="card chat-app">
+                    <div id="plist" class="people-list">
+                        {% if request.user.is_authenticated %}
+                        <div id="websocket-url1" data-user-id="{{ user.username }}" hidden></div>
+                        <h5>Login as : {{request.user.username}}</h5>
+                        {% endif %}
+                        <div class="input-group">
+                            <form method='get' action="{% url 'searchedfriends' %}" id="search-user">
+                                <input type="text" name="search-name" id="search-name" placeholder="Search user by username">
+                                <button type="submit"><i class="fa fa-search"></i></button>
+                            </form>
+                              
+                        </div>
+                        <ul class="list-unstyled chat-list mt-2 mb-0">
+                            {% for friend in friends %}
+                            <li class="clearfix">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                                <div class="about">
+                                   
+                                    {% comment %} <a href="{% url 'home' %}?user={{friend.user.id}}"> {% endcomment %}
+                                        <form method='get' action="{% url 'home' %}" id="form-userid">
+                                            <button type="submit" name="userid" value="{{friend.id}}">
+                                                <div class="name">{{friend.username}}</div>
+                                                <div class="status"><i class="fa fa-circle offline"></i> left 7 mins ago</div>
+                                            </button>
+                                        </form>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% if person is not None %}
+                    <div class="chat">
+                        <div class="chat-header clearfix">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    {% if request.user.is_authenticated %}
+                                        <div id="websocket-url1" data-user-id="{{ user.username }}" hidden></div>
+                                        <p>Loged in as : {{request.user.username}}</p>
+                                        {% endif %}
+                                        <hr>
+
+                                    <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                    </a>
+
+    
+                                    <div class="chat-about">
+                                        <div id="websocket-url2" data-user-id="{{ person.id }}" hidden></div>
+                                    
+
+                                        <h6 class="m-b-0">{{person.username}}</h6>
+                                        <small>{{person.updated}}</small>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 hidden-sm text-right">
+                                    <a href="javascript:void(0);" class="btn btn-outline-secondary"><i
+                                            class="fa fa-camera"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary"><i
+                                            class="fa fa-image"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-info"><i
+                                            class="fa fa-cogs"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i
+                                            class="fa fa-question"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-history text-center">
+                            <textarea id="text-message" style="width: 90%;" rows="15" >
+                                {% for message in messages %}
+                                {{message.user.username}} : {{message.content}}
+                                {% endfor %}
+                            </textarea>
+                        </div>
+                        <div class="chat-message clearfix" >
+                            <div class="input-group mb-0">
+                                <input type="text" id="text-box" class="form-control" placeholder="Enter text here...">
+                                <div class="input-group-prepend">
+                                    <button id="send" class="input-group-text"><i class="fa fa-send"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="chat">
+                        <div class="chat-header clearfix">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    {% comment %} <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                    </a> {% endcomment %}
+                                    <div class="chat-about">
+                                        <h6 class="m-b-0" >Welcome {{request.user.username}}!</h6>
+                                        <small hidden></small>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 hidden-sm text-right">
+                                    <a href="javascript:void(0);" class="btn btn-outline-secondary"><i
+                                            class="fa fa-camera"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-primary"><i
+                                            class="fa fa-image"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-info"><i
+                                            class="fa fa-cogs"></i></a>
+                                    <a href="javascript:void(0);" class="btn btn-outline-warning"><i
+                                            class="fa fa-question"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-history" >
+                            <ul class="m-b-0">
+                                <li class="clearfix">
+                                    <div class="message-data text-right">
+                                        <span class="message-data-time">10:10 AM, Today</span>
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
+                                    </div>
+                                    <div class="message other-message float-right"> Hi Aiden, how are you? How is the
+                                        project coming along? </div>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="message-data">
+                                        <span class="message-data-time">10:12 AM, Today</span>
+                                    </div>
+                                    <div class="message my-message">Are we meeting today?</div>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="message-data">
+                                        <span class="message-data-time">10:15 AM, Today</span>
+                                    </div>
+                                    <div class="message my-message">Project has been already finished and I have results
+                                        to show you.</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- <div class="chat-message clearfix" >
+                            <div class="input-group mb-0">
+                                <input type="text" id="text-box" class="form-control" placeholder="Enter text here...">
+                                <div class="input-group-prepend">
+                                    <button id="send" class="input-group-text"><i class="fa fa-send"></i></button>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        
+        $(document).ready(function() {
+            // Attach a submit event handler to the form
+            $('#friend-form').submit(function(event) {
+                event.preventDefault();  // Prevent the form from submitting normally
+        
+                // Serialize the form data into a query string
+                var formData = $(this).serialize();
+        
+                // Send a GET request using AJAX
+                $.ajax({
+                    url: 'http://127.0.0.1:8000/home',
+                    type: 'GET',
+                    data: formData,
+                    success: function(data) {
+                        // Handle the response data here
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle any errors here
+                    }
+                });
+            });
+        });
+
+        
+        
+        // Creating Websocket
+        var user1 = document.getElementById('websocket-url1').getAttribute('data-user-id');
+        var user2 = document.getElementById('websocket-url2').getAttribute('data-user-id');
+        var ws_url = 'ws://' + window.location.host + '/chat/'+ user1 + '/' + user2 + '/';
+        console.log(ws_url)
+        var ws = new WebSocket(ws_url);
+
+        ws.onopen = function(event){
+            console.log('Connection Established',event)
+        }
+        ws.onmessage = function(event){
+            console.log('Data from server is',event,typeof(event),typeof(event.data))
+            data = JSON.parse(event.data)
+            message = data.message
+            <!-- var user1 = document.getElementById('websocket-url1').getAttribute('data-user-id'); -->
+            document.getElementById('text-message').value += ( user1 + ':' + data.message +'\n')
+        }
+        ws.onerror = function(event){
+            console.log('Error',event)
+        }
+        ws.onclose = function(event){
+            console.log('Disconnected',event)
+        }
+        document.getElementById('send').onclick = function(event){
+            msg = document.getElementById('text-box').value
+            console.log(msg)
+            ws.send(JSON.stringify({
+                'message':msg
+            }))
+            document.getElementById('text-box').value = ""
+        }
+
+        </script>
+</body>
+
+</html> 
